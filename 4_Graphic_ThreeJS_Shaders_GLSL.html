@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>ThreeJS_Lena v13.0 GLSL</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+        <!-- jQuery -->
+        <script src="js/libs/jquery/jquery.js"></script>
+        <!-- BootStrap -->
+        <link rel="stylesheet" href="js/libs/twitter-bootstrap/css/bootstrap.css">
+        <link rel="stylesheet" href="js/libs/twitter-bootstrap/css/bootstrap-theme.css">
+        <script src="js/libs/twitter-bootstrap/js/bootstrap.js"></script>
+        <!-- Angular -->
+        <!--<script src="js/libs/angular.js/angular.js"></script>
+        <!-- Angular DataGrid -->
+        <!-- <link rel="stylesheet" href="js/libs/ng-grid/ng-grid.css">
+        <script src="js/libs/ng-grid/ng-grid.js"></script>
+        <!-- jQuery UI -->
+        <link rel="stylesheet" href="js/libs/jqueryui/jquery-ui.css">
+        <script src="js/libs/jqueryui/jquery-ui.js"></script> 
+        <!--THREE JS 3D -->
+        <script src="js/libs/three.js/three.js"></script> 
+        <script src="js/CamerActions.js"></script>
+        <link rel="stylesheet" href="js/FPSCounter/FPSCounter.css">
+        <!-- HIGH CHARTS-->
+        <script src="js/libs/highcharts/highcharts.js"></script> 
+
+        <!-- My Style and JS -->
+        <link rel="stylesheet" href="4_Graphic_ThreeJS_Shaders_GLSL/theme/style.css">
+
+        
+    </head>
+
+    <body>
+        ThreeJS_Lena v13.0 GLSL - Егошкин Данила Игоревич
+        
+        <div class="ui-widget-content" style="border:0 0 auto 0;">
+
+            <div class="ui-state-default ui-corner-all ui-helper-clearfix" style="padding:4px;">
+                <span class="ui-icon ui-icon-pencil" style="float:left; margin:-2px 5px 0 0;"></span>
+                <input type="checkbox" id="checkRGB_ON" name="radio"><label for="checkRGB_ON">Включить</label>
+            </div>
+            <div id="radioRGB">
+                <input type="radio" id="radio1" name="radio"><label for="radio1">R, G, B</label>
+                <input type="radio" id="radio2" name="radio" checked="checked"><label for="radio2">RGB</label>
+            </div>
+            <div id="red"></div>
+            <div id="green"></div>
+            <div id="blue"></div>
+
+            <div id="swatch" class="ui-widget-content ui-corner-all"></div>
+
+            <input type="checkbox" id="checkBlur" name="radio"><label for="checkBlur">Фильтр Blur</label>
+            <input type="checkbox" id="checkGaussianBlur" name="radio"><label for="checkGaussianBlur">Фильтр Гаусса</label>
+            <svg width="16" height="16"> <ellipse cx="8" cy="8" rx="8" ry="8" fill="#8ae234"/> </svg>
+            <input type="checkbox" id="checkContrastingUp1" name="radio"><label for="checkContrastingUp1">Контрастный Фильтр 1</label>
+            <input type="checkbox" id="checkContrastingUp2" name="radio"><label for="checkContrastingUp2">Контрастный Фильтр 2</label>
+            <input type="checkbox" id="checkContrastingUp3" name="radio"><label for="checkContrastingUp3">Контрастный Фильтр 3 (0 -1 5)</label>
+            <svg width="16" height="16"> <ellipse cx="8" cy="8" rx="8" ry="8" fill="#8ae234"/> </svg>
+            <input type="checkbox" id="checkRobertsFilter" name="radio"><label for="checkRobertsFilter">Фильтр Робертса</label>
+            <input type="checkbox" id="checkPrevittaFilter" name="radio"><label for="checkPrevittaFilter">Фильтр Превитта</label>
+            <input type="checkbox" id="checkSobelaFilter" name="radio"><label for="checkSobelaFilter">Фильтр Собела</label>
+            <svg width="16" height="16"> <ellipse cx="8" cy="8" rx="8" ry="8" fill="#8ae234"/> </svg>
+            <input type="checkbox" id="checkMedianFilter" name="radio"><label for="checkMedianFilter">Медианный Фильтр</label>
+            <svg width="16" height="16"> <ellipse cx="8" cy="8" rx="8" ry="8" fill="#8ae234"/> </svg>
+            <input type="checkbox" id="checkInvert" name="radio"><label for="checkInvert">Инвертировать</label>
+            <input type="checkbox" id="checkGrayscale" name="radio"><label for="checkGrayscale">Полутоновое</label>
+            <input type="checkbox" id="checkGrayscaleMax" name="radio"><label for="checkGrayscaleMax">Полутоновое через максимум</label>
+            <input type="checkbox" id="buttonLoad" name="radio"><label for="buttonLoad">Другая Картинка</label>
+            <br>
+            <input type="checkbox" id="checkBordersUnderlining" name="radio"><label for="checkBordersUnderlining"> Включить Подчеркивание Границ</label>
+            <div id="sliderBordersUnderlining"></div>
+            <div id="sliderBordersUnderliningAlpha"></div>
+            
+
+           
+        </div>
+
+        <div id = "FPSCounter"></div>
+        <video id="video" autoplay loop style="display:none">
+			<source src="data/LokiRunsDeep.mp4" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'>
+	</video>
+        
+        <!-- MAIN SHADERS -->
+        <script id="vertexShaderRGB" type="x-shader/x-vertex">
+            varying vec2 vTexCoord;
+
+            void main() {
+                vTexCoord = uv;
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0 );
+            }
+        </script>
+        <script id="fragmentShaderRGB" type="x-shader/x-fragment">
+            uniform sampler2D texture1;
+            uniform float R;
+            uniform float G;
+            uniform float B;
+            uniform bool Invert;
+            uniform bool GrayScale;
+            uniform bool GrayScaleMax;
+            uniform bool Blur;
+            uniform bool GaussianBlur;
+            uniform bool ContrastingUp1;
+            uniform bool ContrastingUp2;
+            uniform bool ContrastingUp3;
+            uniform bool BordersUnderliningOn;
+            uniform float BordersUnderliningSl;
+            uniform float BordersUnderliningAlphaSl;
+            uniform bool RobertsFilterOn;
+            uniform bool PrevittaFilterOn;
+            uniform bool SobelaFilterOn;
+            uniform bool MedianFilterOn;
+            
+            uniform float texWidth;
+            uniform float texHeight;
+            varying vec2 vTexCoord;
+            
+            ///////// ALL FUNCTIONS BEFORE MAIN
+            void invert() {
+                if(Invert) {
+                    gl_FragColor.r = 1.0 - gl_FragColor.r;
+                    gl_FragColor.g = 1.0 - gl_FragColor.g;
+                    gl_FragColor.b = 1.0 - gl_FragColor.b;
+                }  
+            }
+            void grayScale(){
+                if(GrayScale){
+                    gl_FragColor = vec4((gl_FragColor.r+gl_FragColor.g+gl_FragColor.b)/3.0);
+                    
+                    
+                    //////////////////////////////////////////////////////////////////// \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\++
+                    //  Пример 1
+                    /*
+                    gl_FragColor.r = (gl_FragColor.r+gl_FragColor.g+gl_FragColor.b)/3.0;
+                    gl_FragColor.g = 0.0;
+                    gl_FragColor.b = 0.0;
+                    */
+                   
+                    // Пример 2
+                    /*          
+                    vec4 temp = gl_FragColor;
+                    gl_FragColor.r = 255.0;//(temp.r+temp.g+temp.b)/3.0;
+                    gl_FragColor.g = (temp.r+temp.g+temp.b)/3.0;
+                    gl_FragColor.b = (temp.r+temp.g+temp.b)/3.0;   
+                    */
+                    
+                }
+            }
+            void grayScaleMax(){
+                if(GrayScaleMax){
+                    vec4 max;
+                    max = vec4((gl_FragColor.r+gl_FragColor.g+gl_FragColor.b)/3.0);
+                    
+                    if(gl_FragColor.r>gl_FragColor.g && gl_FragColor.r>gl_FragColor.b)
+                    {
+                        max = vec4(gl_FragColor.r);
+                    }
+                    if(gl_FragColor.g>gl_FragColor.r && gl_FragColor.g>gl_FragColor.b)
+                    {
+                        max = vec4(gl_FragColor.g);
+                    }
+                    if(gl_FragColor.b>gl_FragColor.r && gl_FragColor.b>gl_FragColor.g)
+                    {
+                        max = vec4(gl_FragColor.b);
+                    }
+                    gl_FragColor = max;
+                }
+            }
+            
+            vec4 blur()
+            {
+                mat3 matBlur = mat3(
+                1.0, 1.0, 1.0,
+                1.0, 1.0, 1.0,
+                1.0, 1.0, 1.0
+                );
+        
+                vec4 newColor=vec4(0.0, 0.0, 0.0, 0.0);
+                
+                vec4 c0;
+                vec4 c1;
+                vec4 c2;
+                vec4 c3;
+                vec4 c4;
+                vec4 c5;
+                vec4 c6;
+                vec4 c7;
+                vec4 c8;
+                
+                //c1 = texture2D ( texture1, vec2(vTexCoord.x, vTexCoord.y));
+                c0 = texture2D ( texture1, vec2(vTexCoord.x - 1.0/texWidth, vTexCoord.y + 1.0/texHeight));
+                c1 = texture2D ( texture1, vec2(vTexCoord.x               , vTexCoord.y + 1.0/texHeight));
+                c2 = texture2D ( texture1, vec2(vTexCoord.x + 1.0/texWidth, vTexCoord.y + 1.0/texHeight));
+                
+                c3 = texture2D ( texture1, vec2(vTexCoord.x - 1.0/texWidth, vTexCoord.y                ));
+                c4 = texture2D ( texture1, vec2(vTexCoord.x               , vTexCoord.y                ));
+                c5 = texture2D ( texture1, vec2(vTexCoord.x + 1.0/texWidth, vTexCoord.y                ));
+                
+                c6 = texture2D ( texture1, vec2(vTexCoord.x - 1.0/texWidth, vTexCoord.y - 1.0/texHeight));
+                c7 = texture2D ( texture1, vec2(vTexCoord.x               , vTexCoord.y - 1.0/texHeight));
+                c8 = texture2D ( texture1, vec2(vTexCoord.x + 1.0/texWidth, vTexCoord.y - 1.0/texHeight));
+                
+                //for()
+                newColor = (1.0/9.0)*(c0*matBlur[0][0] + c1*matBlur[0][1] + c2*matBlur[0][2] + 
+                                      c3*matBlur[1][0] + c4*matBlur[1][1] + c5*matBlur[1][2] +
+                                      c6*matBlur[2][0] + c7*matBlur[2][1] + c8*matBlur[2][2]
+                );
+                return newColor;
+            }
+            
+            vec4 GaussianBlur_()
+            {
+               mat3 matBlur = mat3(
+                1.0, 2.0, 1.0,
+                2.0, 4.0, 2.0,
+                1.0, 2.0, 1.0
+                );
+        
+                vec4 newColor=vec4(0.0, 0.0, 0.0, 0.0);
+                
+                vec4 c0;
+                vec4 c1;
+                vec4 c2;
+                vec4 c3;
+                vec4 c4;
+                vec4 c5;
+                vec4 c6;
+                vec4 c7;
+                vec4 c8;
+                
+                //c1 = texture2D ( texture1, vec2(vTexCoord.x, vTexCoord.y));
+                c0 = texture2D ( texture1, vec2(vTexCoord.x - 1.0/texWidth, vTexCoord.y + 1.0/texHeight));
+                c1 = texture2D ( texture1, vec2(vTexCoord.x               , vTexCoord.y + 1.0/texHeight));
+                c2 = texture2D ( texture1, vec2(vTexCoord.x + 1.0/texWidth, vTexCoord.y + 1.0/texHeight));
+                
+                c3 = texture2D ( texture1, vec2(vTexCoord.x - 1.0/texWidth, vTexCoord.y                ));
+                c4 = texture2D ( texture1, vec2(vTexCoord.x               , vTexCoord.y                ));
+                c5 = texture2D ( texture1, vec2(vTexCoord.x + 1.0/texWidth, vTexCoord.y                ));
+                
+                c6 = texture2D ( texture1, vec2(vTexCoord.x - 1.0/texWidth, vTexCoord.y - 1.0/texHeight));
+                c7 = texture2D ( texture1, vec2(vTexCoord.x               , vTexCoord.y - 1.0/texHeight));
+                c8 = texture2D ( texture1, vec2(vTexCoord.x + 1.0/texWidth, vTexCoord.y - 1.0/texHeight));
+                
+                //for()
+                newColor = (1.0/16.0)*(c0*matBlur[0][0] + c1*matBlur[0][1] + c2*matBlur[0][2] + 
+                                      c3*matBlur[1][0] + c4*matBlur[1][1] + c5*matBlur[1][2] +
+                                      c6*matBlur[2][0] + c7*matBlur[2][1] + c8*matBlur[2][2]
+                );
+                return newColor;
+            }
+            
+            vec4 contrastingUp1()
+            {
+               mat3 matBlur = mat3(
+                -1, -1, -1,
+                -1, 9, -1,
+                -1, -1, -1
+                );
+        
+                vec4 newColor=vec4(0.0, 0.0, 0.0, 0.0);
+                
+                vec4 c0;
+                vec4 c1;
+                vec4 c2;
+                vec4 c3;
+                vec4 c4;
+                vec4 c5;
+                vec4 c6;
+                vec4 c7;
+                vec4 c8;
+                
+                //c1 = texture2D ( texture1, vec2(vTexCoord.x, vTexCoord.y));
+                c0 = texture2D ( texture1, vec2(vTexCoord.x - 1.0/texWidth, vTexCoord.y + 1.0/texHeight));
+                c1 = texture2D ( texture1, vec2(vTexCoord.x               , vTexCoord.y + 1.0/texHeight));
+                c2 = texture2D ( texture1, vec2(vTexCoord.x + 1.0/texWidth, vTexCoord.y + 1.0/texHeight));
+                
+                c3 = texture2D ( texture1, vec2(vTexCoord.x - 1.0/texWidth, vTexCoord.y                ));
+                c4 = texture2D ( texture1, vec2(vTexCoord.x               , vTexCoord.y                ));
+                c5 = texture2D ( texture1, vec2(vTexCoord.x + 1.0/texWidth, vTexCoord.y                ));
+                
+                c6 = texture2D ( texture1, vec2(vTexCoord.x - 1.0/texWidth, vTexCoord.y - 1.0/texHeight));
+                c7 = texture2D ( texture1, vec2(vTexCoord.x               , vTexCoord.y - 1.0/texHeight));
+                c8 = texture2D ( texture1, vec2(vTexCoord.x + 1.0/texWidth, vTexCoord.y - 1.0/texHeight));
+                
+                //for()
+                newColor = (c0*matBlur[0][0] + c1*matBlur[0][1] + c2*matBlur[0][2] + 
+                                      c3*matBlur[1][0] + c4*matBlur[1][1] + c5*matBlur[1][2] +
+                                      c6*matBlur[2][0] + c7*matBlur[2][1] + c8*matBlur[2][2]
+                );
+                return newColor;
+            }
+            
+            vec4 contrastingUp2()
+            {
+               mat3 matBlur = mat3(
+                1, -2, 1,
+                -2, 5, -2,
+                1, -2, 1
+                );
+        
+                vec4 newColor=vec4(0.0, 0.0, 0.0, 0.0);
+                
+                vec4 c0;
+                vec4 c1;
+                vec4 c2;
+                vec4 c3;
+                vec4 c4;
+                vec4 c5;
+                vec4 c6;
+                vec4 c7;
+                vec4 c8;
+                
+                //c1 = texture2D ( texture1, vec2(vTexCoord.x, vTexCoord.y));
+                c0 = texture2D ( texture1, vec2(vTexCoord.x - 1.0/texWidth, vTexCoord.y + 1.0/texHeight));
+                c1 = texture2D ( texture1, vec2(vTexCoord.x               , vTexCoord.y + 1.0/texHeight));
+                c2 = texture2D ( texture1, vec2(vTexCoord.x + 1.0/texWidth, vTexCoord.y + 1.0/texHeight));
+                
+                c3 = texture2D ( texture1, vec2(vTexCoord.x - 1.0/texWidth, vTexCoord.y                ));
+                c4 = texture2D ( texture1, vec2(vTexCoord.x               , vTexCoord.y                ));
+                c5 = texture2D ( texture1, vec2(vTexCoord.x + 1.0/texWidth, vTexCoord.y                ));
+                
+                c6 = texture2D ( texture1, vec2(vTexCoord.x - 1.0/texWidth, vTexCoord.y - 1.0/texHeight));
+                c7 = texture2D ( texture1, vec2(vTexCoord.x               , vTexCoord.y - 1.0/texHeight));
+                c8 = texture2D ( texture1, vec2(vTexCoord.x + 1.0/texWidth, vTexCoord.y - 1.0/texHeight));
+                
+                //for()
+                newColor = (c0*matBlur[0][0] + c1*matBlur[0][1] + c2*matBlur[0][2] + 
+                                      c3*matBlur[1][0] + c4*matBlur[1][1] + c5*matBlur[1][2] +
+                                      c6*matBlur[2][0] + c7*matBlur[2][1] + c8*matBlur[2][2]
+                );
+                return newColor;
+            }
+            
+            vec4 contrastingUp3()
+            {
+               mat3 matBlur = mat3(
+                0, -1, 0,
+                -1, 5, -1,
+                0, -1, 0
+                );
+        
+                vec4 newColor=vec4(0.0, 0.0, 0.0, 0.0);
+                
+                vec4 c0;
+                vec4 c1;
+                vec4 c2;
+                vec4 c3;
+                vec4 c4;
+                vec4 c5;
+                vec4 c6;
+                vec4 c7;
+                vec4 c8;
+                
+                //c1 = texture2D ( texture1, vec2(vTexCoord.x, vTexCoord.y));
+                c0 = texture2D ( texture1, vec2(vTexCoord.x - 1.0/texWidth, vTexCoord.y + 1.0/texHeight));
+                c1 = texture2D ( texture1, vec2(vTexCoord.x               , vTexCoord.y + 1.0/texHeight));
+                c2 = texture2D ( texture1, vec2(vTexCoord.x + 1.0/texWidth, vTexCoord.y + 1.0/texHeight));
+                
+                c3 = texture2D ( texture1, vec2(vTexCoord.x - 1.0/texWidth, vTexCoord.y                ));
+                c4 = texture2D ( texture1, vec2(vTexCoord.x               , vTexCoord.y                ));
+                c5 = texture2D ( texture1, vec2(vTexCoord.x + 1.0/texWidth, vTexCoord.y                ));
+                
+                c6 = texture2D ( texture1, vec2(vTexCoord.x - 1.0/texWidth, vTexCoord.y - 1.0/texHeight));
+                c7 = texture2D ( texture1, vec2(vTexCoord.x               , vTexCoord.y - 1.0/texHeight));
+                c8 = texture2D ( texture1, vec2(vTexCoord.x + 1.0/texWidth, vTexCoord.y - 1.0/texHeight));
+                
+                //for()
+                newColor = (c0*matBlur[0][0] + c1*matBlur[0][1] + c2*matBlur[0][2] + 
+                                      c3*matBlur[1][0] + c4*matBlur[1][1] + c5*matBlur[1][2] +
+                                      c6*matBlur[2][0] + c7*matBlur[2][1] + c8*matBlur[2][2]
+                );
+                return newColor;
+            }
+            
+            vec4 bordersUnderlining()
+            {
+
+                float alpha = BordersUnderliningSl/100.0;
+                float b = BordersUnderliningAlphaSl;
+                vec4 newColor=vec4(0.0, 0.0, 0.0, 0.0);
+                
+                vec4 I = texture2D ( texture1, vec2(vTexCoord.x, vTexCoord.y));
+                vec4 Idx = texture2D ( texture1, vec2(vTexCoord.x+1.0/texWidth, vTexCoord.y)) - I;
+                vec4 Idy = texture2D ( texture1, vec2(vTexCoord.x, vTexCoord.y+1.0/texHeight)) - I;
+                //c1 = texture2D ( texture1, vec2(vTexCoord.x, vTexCoord.y));
+                vec4 Idz = Idx*cos(alpha)+Idy*sin(alpha);
+                //for()
+                newColor = I + b*Idz;
+                return newColor;
+            }
+            
+            
+            vec4 RobertsFilter()
+            {
+             /*
+             * s1 s2 s3
+             * s4 s5 s6
+             * s7 s8 s9
+             */
+                vec4 newColor=vec4(0.0, 0.0, 0.0, 0.0);
+                vec4 s9 = texture2D ( texture1, 
+                                      vec2(vTexCoord.x + 1.0/texWidth, 
+                                      vTexCoord.y - 1.0/texHeight));
+                vec4 s5 = texture2D ( texture1, 
+                                      vec2(vTexCoord.x, 
+                                      vTexCoord.y));
+                vec4 s8 = texture2D ( texture1, 
+                                      vec2(vTexCoord.x, 
+                                      vTexCoord.y - 1.0/texHeight));
+                vec4 s6 = texture2D ( texture1, 
+                                      vec2(vTexCoord.x + 1.0/texWidth, 
+                                      vTexCoord.y));
+                vec4 Gx = s9 - s5;
+                vec4 Gy = s8 - s6;
+                newColor = abs(Gx)+abs(Gy);
+                return newColor;
+            }
+           
+            vec4 PrevittaFilter()
+            {
+             /*
+             * s1 s2 s3
+             * s4 s5 s6
+             * s7 s8 s9
+             */
+            vec4 s1 = texture2D ( texture1, 
+                                      vec2(vTexCoord.x - 1.0/texWidth, 
+                                      vTexCoord.y + 1.0/texHeight));
+            vec4 s2 = texture2D ( texture1, 
+                                      vec2(vTexCoord.x, 
+                                      vTexCoord.y + 1.0/texHeight));
+            vec4 s3 = texture2D ( texture1, 
+                                      vec2(vTexCoord.x + 1.0/texWidth, 
+                                      vTexCoord.y + 1.0/texHeight));
+            vec4 s4 = texture2D ( texture1, 
+                                      vec2(vTexCoord.x - 1.0/texWidth, 
+                                      vTexCoord.y));
+                                      
+            vec4 s6 = texture2D ( texture1, 
+                                      vec2(vTexCoord.x + 1.0/texWidth, 
+                                      vTexCoord.y));
+            vec4 s7 = texture2D ( texture1, 
+                                      vec2(vTexCoord.x - 1.0/texWidth, 
+                                      vTexCoord.y - 1.0/texHeight));
+            vec4 s8 = texture2D ( texture1, 
+                                      vec2(vTexCoord.x, 
+                                      vTexCoord.y - 1.0/texHeight));
+            vec4 s9 = texture2D ( texture1, 
+                                      vec2(vTexCoord.x + 1.0/texWidth, 
+                                      vTexCoord.y - 1.0/texHeight));
+                                      
+                vec4 newColor=vec4(0.0, 0.0, 0.0, 0.0);
+                vec4 Gx = (s7 + s8 + s9) - (s1 + s2 + s3);
+                vec4 Gy = (s3 + s6 + s9) - (s1 + s4 + s7);
+                newColor = abs(Gx)+abs(Gy);
+                return newColor;
+            }
+            
+            vec4 SobelaFilter()
+            {
+            /*
+             * s1 s2 s3
+             * s4 s5 s6
+             * s7 s8 s9
+             */
+            vec4 s1 = texture2D ( texture1, 
+                                      vec2(vTexCoord.x - 1.0/texWidth, 
+                                      vTexCoord.y + 1.0/texHeight));
+            vec4 s2 = texture2D ( texture1, 
+                                      vec2(vTexCoord.x, 
+                                      vTexCoord.y + 1.0/texHeight));
+            vec4 s3 = texture2D ( texture1, 
+                                      vec2(vTexCoord.x + 1.0/texWidth, 
+                                      vTexCoord.y + 1.0/texHeight));
+            vec4 s4 = texture2D ( texture1, 
+                                      vec2(vTexCoord.x - 1.0/texWidth, 
+                                      vTexCoord.y));
+                                      
+            vec4 s6 = texture2D ( texture1, 
+                                      vec2(vTexCoord.x + 1.0/texWidth, 
+                                      vTexCoord.y));
+            vec4 s7 = texture2D ( texture1, 
+                                      vec2(vTexCoord.x - 1.0/texWidth, 
+                                      vTexCoord.y - 1.0/texHeight));
+            vec4 s8 = texture2D ( texture1, 
+                                      vec2(vTexCoord.x, 
+                                      vTexCoord.y - 1.0/texHeight));
+            vec4 s9 = texture2D ( texture1, 
+                                      vec2(vTexCoord.x + 1.0/texWidth, 
+                                      vTexCoord.y - 1.0/texHeight));
+                                      
+                vec4 newColor=vec4(0.0, 0.0, 0.0, 0.0);
+                vec4 Gx = (s7 + 2.0*s8 + s9) - (s1 + 2.0*s2 + s3);
+                vec4 Gy = (s3 + 2.0*s6 + s9) - (s1 + 2.0*s4 + s7);
+                newColor = abs(Gx)+abs(Gy);
+                return newColor;
+            }
+            
+            vec4 MedianFilter()
+            {
+            /*
+             * s1 s2 s3
+             * s4 s5 s6
+             * s7 s8 s9
+             */
+            vec4 s1 = texture2D ( texture1, 
+                                      vec2(vTexCoord.x - 1.0/texWidth, 
+                                      vTexCoord.y + 1.0/texHeight));
+            vec4 s2 = texture2D ( texture1, 
+                                      vec2(vTexCoord.x, 
+                                      vTexCoord.y + 1.0/texHeight));
+            vec4 s3 = texture2D ( texture1, 
+                                      vec2(vTexCoord.x + 1.0/texWidth, 
+                                      vTexCoord.y + 1.0/texHeight));
+            vec4 s4 = texture2D ( texture1, 
+                                      vec2(vTexCoord.x - 1.0/texWidth, 
+                                      vTexCoord.y));
+            vec4 s5 = texture2D ( texture1, 
+                                      vec2(vTexCoord.x, 
+                                      vTexCoord.y));                          
+            vec4 s6 = texture2D ( texture1, 
+                                      vec2(vTexCoord.x + 1.0/texWidth, 
+                                      vTexCoord.y));
+            vec4 s7 = texture2D ( texture1, 
+                                      vec2(vTexCoord.x - 1.0/texWidth, 
+                                      vTexCoord.y - 1.0/texHeight));
+            vec4 s8 = texture2D ( texture1, 
+                                      vec2(vTexCoord.x, 
+                                      vTexCoord.y - 1.0/texHeight));
+            vec4 s9 = texture2D ( texture1, 
+                                      vec2(vTexCoord.x + 1.0/texWidth, 
+                                      vTexCoord.y - 1.0/texHeight));
+            vec4 s[9];
+            s[0] = s1; s[1] = s2; s[2] = s3;
+            s[3] = s4; s[4] = s5; s[5] = s6;
+            s[6] = s7; s[7] = s8; s[8] = s9;
+            
+            vec4 temp;
+            for(int i=int(0.0);i<9;i++)
+            {
+                for(int j=int(0.0);j<8;j++)
+                {
+                    if((s[j].x+s[j].y+s[j].z)> (s[j+1].x+s[j+1].y+s[j+1].z))   // s[j]>s[j+1]
+                    {
+                        temp = s[j+1];
+                        s[j+1] = s[j];
+                        s[j] = temp;
+                    }
+                }
+            };
+                                                
+                vec4 newColor = s[5];
+                return newColor;
+            }
+            void main() {
+            vec4 tex = texture2D ( texture1, vTexCoord );
+            gl_FragColor = tex;
+
+            //}
+            //while(false);
+            //gl_FragColor = texture2D(texture1, vTexCoord); // Displays Nothing
+            //gl_FragColor = vec4(0.5, 0.2, 1.0, 1.0); // Works; Displays Flat Color
+
+            grayScaleMax();
+            
+            grayScale();
+
+            invert();
+            
+            
+            /////////////////// FILTERS
+            
+            
+            gl_FragColor.r = gl_FragColor.r+R/255.0;
+            gl_FragColor.g = gl_FragColor.g+G/255.0;
+            gl_FragColor.b = gl_FragColor.b+B/255.0;
+            
+
+            if(Blur){
+                gl_FragColor = blur();
+            }
+            if(GaussianBlur){
+                gl_FragColor = GaussianBlur_();
+            }
+
+            if(ContrastingUp1){
+            gl_FragColor = contrastingUp1();
+            }
+            if(ContrastingUp2){
+                gl_FragColor = contrastingUp2();
+            }
+            if(ContrastingUp3){
+                gl_FragColor = contrastingUp3();
+            }
+            if(BordersUnderliningOn){
+                gl_FragColor = bordersUnderlining();
+            }
+            if(RobertsFilterOn){
+                gl_FragColor = RobertsFilter();
+            }
+            if(PrevittaFilterOn){
+                gl_FragColor = PrevittaFilter();
+            }
+            if(SobelaFilterOn){
+                gl_FragColor = SobelaFilter();
+            }
+            if(MedianFilterOn){            
+                gl_FragColor = MedianFilter();
+            }
+            /*
+            gl_FragColor.r = float((vTexCoord.x));
+            gl_FragColor.g = float((vTexCoord.y));
+            gl_FragColor.b = 0.0;
+            if(vTexCoord.x > 0.4 && vTexCoord.x < 0.6)
+            {
+                gl_FragColor.b = 1.0;
+            }
+            */
+            }
+
+
+        </script>
+
+        <script>
+
+        </script>
+        <script src="data/video.js"></script>
+        <script src="4_Graphic_ThreeJS_Shaders_GLSL/js/functions.js"></script>
+        <script src="js/FPSCounter/FPSCounter.js"></script>
+        
+    </body>
+</html>

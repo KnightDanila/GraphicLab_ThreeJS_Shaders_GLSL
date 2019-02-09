@@ -1,0 +1,71 @@
+html{
+    /*width: 100%;*/
+    /*height: 100%;*/
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 100% 100%;/*cover;*/
+    background-color: darkslategray;
+    /*background-image: url('grass_daisies_light_art_ultra_3840x2160_hd-wallpaper-80138.jpg');*/
+    /*background-color: black;*/
+}
+
+body {
+    padding: 15px;
+    background: linear-gradient(45deg, rgba(0,0,0,0), rgba(0,0,0,0));
+    /*background-color: rgba(0,0,0,255);*/
+    /*background-color: black;*/
+    /*background-color: darkslategray;*/
+    color: yellowgreen;
+
+}
+
+html, body{height: 100%;}
+
+.table-style{
+    display: inline-block;
+    /*box-sizing: border-box;*/
+    /*position: absolute;*/
+    background-color: rgba(50, 50, 50, 0.5);
+}
+.gridStyle {
+    border: 1px solid rgb(212,212,212);
+
+    width: 400px; 
+    height: 300px;
+}
+
+
+#red, #green, #blue {
+    /*float: left;*/
+    /*clear: left;*/
+    width: 200px;
+    margin: 8px;
+}
+#swatch {
+    width: 120px;
+    height: 120px;
+    /*margin-top: 18px;*/
+    /*margin-left: 350px;*/
+    /*margin-bottom: 18px;*/
+    background-image: none;
+    padding: 5px;
+/*float: left;*/
+    /*box-sizing: border-box;  /*Ширина блока с полями
+    /*position: relative;*/
+    /*clear:both;*/
+}
+#red .ui-slider-range { background: #ef2929; }
+#red .ui-slider-handle { border-color: #ef2929; }
+#green .ui-slider-range { background: #8ae234; }
+#green .ui-slider-handle { border-color: #8ae234; }
+#blue .ui-slider-range { background: #729fcf; }
+#blue .ui-slider-handle { border-color: #729fcf; }
+
+
+
+#LenaSoderberg {
+    text-align: center;
+    /*width: 80%;*/
+    height: 75%;
+}
+

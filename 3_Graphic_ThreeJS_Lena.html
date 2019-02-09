@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>ThreeJS_Lena v13.0 - EgoshkinDanila</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+        <!-- jQuery -->
+        <script src="js/libs/jquery/jquery.js"></script>
+        <!-- BootStrap -->
+        <link rel="stylesheet" href="js/libs/twitter-bootstrap/css/bootstrap.css">
+        <link rel="stylesheet" href="js/libs/twitter-bootstrap/css/bootstrap-theme.css">
+        <script src="js/libs/twitter-bootstrap/js/bootstrap.js"></script>
+        <!-- jQuery UI -->
+        <link rel="stylesheet" href="js/libs/jqueryui/jquery-ui.css">
+        <script src="js/libs/jqueryui/jquery-ui.js"></script> 
+        <!--THREE JS 3D -->
+        <script src="js/libs/three.js/three.js"></script> 
+        <script src="js/CamerActions.js"></script>
+        <script src="js/FPSCounter/FPSCounter.js"></script>
+        <link rel="stylesheet" href="js/FPSCounter/FPSCounter.css">
+        <!-- My Style and JS -->
+        <link rel="stylesheet" href="3_Graphic_ThreeJS_Lena/theme/style.css">
+        <script src="3_Graphic_ThreeJS_Lena/js/functions.js"></script>
+
+
+
+    </head>
+    <body>
+        <!-- SHADER RGB -->
+        <script id="vertexShaderRGB" type="x-shader/x-vertex">
+            varying vec2 vTexCoord;
+            varying float ColorHistogram[256];
+            //attribute int a;
+            void main() {
+            vTexCoord = uv;
+            gl_Position = projectionMatrix *
+            modelViewMatrix * vec4(position, 1.0 );
+            for(int i=0;i<256;i++)
+            {
+            ColorHistogram[i] = float(i);
+            }    
+
+            }
+        </script>
+        <script id="fragmentShaderRGB" type="x-shader/x-fragment">
+            uniform sampler2D texture1;
+            uniform float R;
+            uniform float G;
+            uniform float B;
+            uniform bool Invert;
+            uniform bool GrayScale;
+            varying float ColorHistogram[256];
+            varying vec2 vTexCoord;
+
+            //attribute int a;
+
+            ///////// ALL FUNCTIONS BEFORE MAIN
+            void invert() {
+            if(Invert) {
+            gl_FragColor.r = 1.0 - gl_FragColor.r;
+            gl_FragColor.g = 1.0 - gl_FragColor.g;
+            gl_FragColor.b = 1.0 - gl_FragColor.b;
+            }  
+            }
+            void grayScale(){
+            if(GrayScale){
+            gl_FragColor = vec4((gl_FragColor.r+gl_FragColor.g+gl_FragColor.b)/3.0);
+            }
+            }
+
+            void colorHistogram(){
+            //
+            //ColorHistogram[0];//=1.0;
+            //ColorHistogram[10]=1.0;
+            /*
+            if((gl_FragColor.r+gl_FragColor.g+gl_FragColor.b)/3.0>255){
+            ColorHistogram[(gl_FragColor.r+gl_FragColor.g+gl_FragColor.b)/3.0] += 1.0;
+            }
+            else{
+            ColorHistogram[(gl_FragColor.r+gl_FragColor.g+gl_FragColor.b)] += 1.0;
+            }
+            */   
+            }
+            void main() {
+            vec4 tex = texture2D ( texture1, vTexCoord );
+            gl_FragColor = tex;
+            //gl_FragColor = texture2D(texture1, vTexCoord); // Displays Nothing
+            //gl_FragColor = vec4(0.5, 0.2, 1.0, 1.0); // Works; Displays Flat Color
+
+            grayScale();
+
+            invert();
+
+
+            gl_FragColor.r = gl_FragColor.r+R/255.0;
+            gl_FragColor.g = gl_FragColor.g+G/255.0;
+            gl_FragColor.b = gl_FragColor.b+B/255.0;
+
+            colorHistogram();
+
+            }
+
+
+        </script>
+
+
+        <div>ThreeJS_Lena v13.0 - EgoshkinDanila</div><div id = "FPSCounter"></div>
+        <script>
+            imgWidth = 0;
+            imgHeight = 0;
+
+            var img = new Image();
+            img.onload = function () {
+                imgWidth = this.width;
+                imgHeight = this.height;
+                alert(this.width + 'x' + this.height);
+                //DrawLena();
+            };
+            img.src = srcTexture;/*'http://www.google.com/intl/en_ALL/images/logo.gif';*/
+        </script>
+
+        <div class="ui-widget-content ui-state-default ui-corner-all ui-helper-clearfix" style="padding: 10px">
+            <div class="row">
+                <div class="col-auto">
+                    <div>
+                        <span class="ui-icon ui-icon-pencil" style="float:left;"></span>
+                        Simple Colorpicker
+                        <div id="radioRGB">
+                            <input type="radio" id="radio1" name="radio"><label for="radio1">R, G, B</label>
+                            <input type="radio" id="radio2" name="radio" checked="checked"><label for="radio2">RGB</label>
+                        </div>
+                        <div>
+                            <div id="red"></div>
+                            <div id="green"></div>
+                            <div id="blue"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div id="swatch" class="ui-widget-content ui-corner-all" style="display: inline-block"><span id="Cube"></span></div>
+                </div>
+                <div class="col">
+                    <input type="checkbox" id="checkInvert" name="radio"><label for="checkInvert">Инвертировать</label>
+                    <input type="checkbox" id="checkGrayscale" name="radio"><label for="checkGrayscale">Полутоновое</label>
+                    <input type="checkbox" id="buttonLoad" name="radio"><label for="buttonLoad">Другая Картинка</label>
+                    <input type="file" id="logo" style="display: none" accept="image/*"/>
+                    <span id="FileName">Lena Soderberg</span>
+                </div>
+            </div>
+        </div>
+        <div class="" id="LenaSoderberg" ></div>
+
+        <script>
+            var scene = new THREE.Scene(); // Create a Three.js scene object.
+            var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000); // Define the perspective camera's attributes.
+
+            var renderer = window.WebGLRenderingContext ? new THREE.WebGLRenderer() : new THREE.CanvasRenderer(); // Fallback to canvas renderer, if necessary.
+            renderer.domElement.id = "CubeCanvas";
+            renderer.setSize(500, 500); // Set the size of the WebGL viewport.
+            document.getElementById("Cube").appendChild(renderer.domElement); // Append the WebGL viewport to the DOM.
+            document.getElementById("CubeCanvas").style.width = "100%"; //document.getElementById("Cube").children[0].style.width = "100%";
+            document.getElementById("CubeCanvas").style.height = "100%"; //document.getElementById("Cube").children[0].style.height = "100%";
+            var geometry = new THREE.CubeGeometry(20, 20, 20); // Create a 20 by 20 by 20 cube.
+            var material = new THREE.MeshBasicMaterial({color: "#" + ShaderColor1}); // Skin the cube with 100% blue.
+            var cube = new THREE.Mesh(geometry, material); // Create a mesh based on the specified geometry (cube) and material (blue skin).
+            scene.add(cube); // Add the cube at (0, 0, 0).
+
+            camera.position.z = 30; // Move the camera away from the origin, down the positive z-axis.
+
+            var render = function () {
+                cube.rotation.x += 0.01; // Rotate the sphere by a small amount about the x- and y-axes.
+                cube.rotation.y += 0.01;
+                var material1 = new THREE.MeshBasicMaterial({color: "#" + ShaderColor1}); // Skin the cube with 100% blue.
+                cube.material = material1; // Skin the cube with 100% blue.
+                scene.cube = cube;
+                renderer.render(scene, camera); // Each time we change the position of the cube object, we must re-render it.
+                requestAnimationFrame(render); // Call the render() function up to 60 times per second (i.e., up to 60 animation frames per second).
+            };
+
+            render(); // Start the rendering of the animation frames.
+        </script>
+        <script>
+            function DrawLena() {
+                var scene2;
+                var camera2;
+                var renderer2;
+                var controls;
+                var plane;
+
+                var init = function () {
+
+                    scene2 = new THREE.Scene(); // Create a Three.js scene object.
+                    camera2 = new THREE.PerspectiveCamera(75, 500 / 500, 0.1, 1000); // Define the perspective camera's attributes.
+
+                    renderer2 = window.WebGLRenderingContext ? new THREE.WebGLRenderer() : new THREE.CanvasRenderer(); // Fallback to canvas renderer, if necessary.
+                    renderer2.domElement.id = "LenaSoderbergCanvas";
+                    renderer2.domElement.className = "";
+                    renderer2.setSize(500, 500); // Set the size of the WebGL viewport.
+                    document.getElementById("LenaSoderberg").appendChild(renderer2.domElement); // Append the WebGL viewport to the DOM.
+                    //document.getElementById("LenaSoderbergCanvas").style.width = "37%";
+                    document.getElementById("LenaSoderbergCanvas").style.width = "auto";
+                    document.getElementById("LenaSoderbergCanvas").style.height = "100%";
+                    //var materialMap = new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture('Lenna.png')});
+
+                    renderer2.domElement.clientWidth = imgWidth;
+                    renderer2.domElement.clientHeight = imgHeight;
+                    var Width = imgWidth;// * (imgWidth / renderer2.domElement.clientWidth);
+                    var Height = imgHeight;// * (imgHeight / renderer2.domElement.clientHeight);
+                    var geometry2 = new THREE.PlaneGeometry(Width, Height); // Create a 20 by 20 by 20 cube.
+
+                    //// RGB - Shader
+                    var vertShaderRGB = document.getElementById('vertexShaderRGB').innerHTML;
+                    var fragShaderRGB = document.getElementById('fragmentShaderRGB').innerHTML;
+
+                    var uniformsRGB = {
+                        texture1: {type: "t", value: THREE.ImageUtils.loadTexture(srcTexture)},
+                        R: {type: "f", value: RED},
+                        G: {type: "f", value: GREEN},
+                        B: {type: "f", value: BLUE},
+                        Invert: {type: "i", value: INVERT},
+                        GrayScale: {type: "i", value: GRAYSCALE}
+                    };
+                    /*
+                     var attributeRGB = {
+                     ColorHistogram: {type: "1iv", value: new Array(100)}//COLORHISTOGRAM}
+                     };*/
+                    var materialRGB = new THREE.ShaderMaterial({
+                        uniforms: uniformsRGB,
+                        vertexShader: vertShaderRGB,
+                        fragmentShader: fragShaderRGB
+                    });
+                    //https://github.com/mrdoob/three.js/wiki/Uniforms-types
+                    //////////////////////////////////////////////
+
+
+                    //var a = texture.image.width;
+                    plane = new THREE.Mesh(geometry2, materialRGB); // Create a mesh based on the specified geometry (cube) and material (blue skin).
+                    //plane.doubleSided = true;
+                    plane.material.side = THREE.DoubleSide;
+                    scene2.add(plane); // Add the cube at (0, 0, 0).
+
+                    camera2.position.z = 350; // Move the camera away from the origin, down the positive z-axis.
+
+                    renderer2.context.canvas = function () {
+                        controls = new THREE.OrbitControls(camera2);
+                    };   // RECOMMENT ONLY THIS
+                    //controls.addEventListener( 'change', render2 );
+                };
+
+                var render2 = function () {
+                    plane.material.uniforms.R.value = RED;
+                    plane.material.uniforms.G.value = GREEN;
+                    plane.material.uniforms.B.value = BLUE;
+                    plane.material.uniforms.Invert.value = INVERT;
+                    plane.material.uniforms.GrayScale.value = GRAYSCALE;
+                    //plane.material.uniforms.ColorHistogram.value;
+                    //plane.material.uniforms.ColorHistogram.value = COLORHISTOGRAM_ZERO;
+                    //plane.rotation.y += 0.05;
+
+                    renderer2.render(scene2, camera2); // Each time we change the position of the cube object, we must re-render it.
+
+                    requestAnimationFrame(render2); // Call the render() function up to 60 times per second (i.e., up to 60 animation frames per second).
+                    //controls.update();    
+                };
+
+                init();
+                //cameraAction();
+                render2(); // Start the rendering of the animation frames.
+            }
+        </script>
+
+        <!--<div>
+            <canvas id="myCanvas" width="578" height="400"></canvas>
+            <script>
+                
+                function drawImage(imageObj) {
+                    var canvas = document.getElementById('myCanvas');
+                    var context = canvas.getContext('2d');
+                    var x = 69;
+                    var y = 50;
+    
+                    context.drawImage(imageObj, x, y);
+    
+                    var imageData = context.getImageData(x, y, imageObj.width, imageObj.height);
+                    var data = imageData.data;
+    
+                    for (var i = 0; i < data.length; i += 4) {
+                        // red
+                        data[i] = 255 - data[i];
+                        // green
+                        data[i + 1] = 255 - data[i + 1];
+                        // blue
+                        data[i + 2] = 255 - data[i + 2];
+                    }
+    
+                    // overwrite original image
+                    context.putImageData(imageData, x, y);
+                }
+                
+                $(myCanvas).width(imgWidth);
+                $(myCanvas).height(imgHeight);
+                var imageObj = new Image();
+                imageObj.onload = function () {
+                    
+                    drawImage(this);
+                };
+                imageObj.src = srcTexture;
+            </script>
+        </div>-->
+
+    </body>
+</html>

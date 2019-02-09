@@ -1,0 +1,28 @@
+Generated File. Do not edit.
+
+[HEADER]
+Version|0.18t|$
+Arch|x86_64-msvc|$
+
+[PLUGINS]
+NPSWF64_18_0_0_209.dll|$
+C:\Windows\system32\Macromed\Flash\NPSWF64_18_0_0_209.dll|$
+18.0.0.209|$
+1452288634050|0|0|0|$
+Shockwave Flash 18.0 r0|$
+Shockwave Flash|$
+2
+0|application/x-shockwave-flash|Adobe Flash movie|swf|$
+1|application/futuresplash|FutureSplash movie|spl|$
+
+[INVALID]
+C:\Program Files\TabletPlugins\npWacomTabletPlugin.dll|$
+1395762928000|$
+C:\Program Files\Microsoft Silverlight\5.1.40620.0\npctrl.dll|$
+1434747814000|$
+C:\Program Files\Microsoft Silverlight\5.1.40620.0\npctrlui.dll|$
+1434747814000|$
+C:\Program Files\Java\jre1.8.0_111\bin\plugin2\npjp2.dll|$
+1479036775629|$
+C:\Program Files\Java\jre1.8.0_111\bin\dtplugin\npdeployJava1.dll|$
+1479036774896|$
