@@ -5,7 +5,7 @@
  */
 /*
  * Add it in HTML
-    <div id = "FPSCounter"></div>
+ <div id = "FPSCounter"></div>
  */
 
 var FPS_Real = 100;
@@ -31,6 +31,8 @@ function getCurrentTime() {
     return (self.performance !== undefined && self.performance.now !== undefined) ? self.performance.now() : Date.now();
 }
 
-setInterval(function () {
-    document.getElementById("FPSCounter").innerHTML = "FPS: " + getFPS();
-}, 1000 / FPS_Real);
+window.onload = function () {
+    setInterval(function () {
+        document.getElementById("FPSCounter").innerHTML = "FPS: " + getFPS();
+    }, 1000 / FPS_Real);
+};

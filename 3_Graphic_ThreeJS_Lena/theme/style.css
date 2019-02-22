@@ -69,3 +69,17 @@ html, body{height: 100%;}
     height: 75%;
 }
 
+
+
+.x01 {
+    width: 10%;
+    height: auto;
+}
+.x32 {
+    width: 32px;
+    height: 32px;
+}
+.x64 {
+    width: 32px;
+    height: 32px;
+}

@@ -361,6 +361,10 @@ function StartToRender() {
     var plane;
     var oldWidth = imgWidth;
     var oldHeight = imgHeight;
+    var videoImageContext;
+    var videoImage;
+    var materialRGB;
+    
     var init = function () {
 
         scene2 = new THREE.Scene(); // Create a Three.js scene object.
@@ -515,13 +519,19 @@ function StartToRender() {
         };
         
         */
-       
+       videoImageContext.drawImage(document.getElementById("video"), 0, 0 );
+       videoTexture.needsUpdate = true;
+       //materialRGB.uniforms.texture1.needsUpdate = true;
+       plane.material.uniforms.texture1.needsUpdate = true;
+       /*
        if ( video.readyState === video.HAVE_ENOUGH_DATA ) 
 	{
 		videoImageContext.drawImage( video, 0, 0 );
 		if ( videoTexture ) 
 			videoTexture.needsUpdate = true;
 	}
+        */
+        
     };
     init();
     //cameraAction();

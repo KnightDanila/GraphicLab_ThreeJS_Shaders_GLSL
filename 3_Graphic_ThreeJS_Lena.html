@@ -15,7 +15,6 @@ and open the template in the editor.
         <script src="js/libs/jquery/jquery.js"></script>
         <!-- BootStrap -->
         <link rel="stylesheet" href="js/libs/twitter-bootstrap/css/bootstrap.css">
-        <link rel="stylesheet" href="js/libs/twitter-bootstrap/css/bootstrap-theme.css">
         <script src="js/libs/twitter-bootstrap/js/bootstrap.js"></script>
         <!-- jQuery UI -->
         <link rel="stylesheet" href="js/libs/jqueryui/jquery-ui.css">
@@ -25,12 +24,14 @@ and open the template in the editor.
         <script src="js/CamerActions.js"></script>
         <script src="js/FPSCounter/FPSCounter.js"></script>
         <link rel="stylesheet" href="js/FPSCounter/FPSCounter.css">
+        <!--Other JS -->
+        <script src="js/gifler.min.js" type="text/javascript"></script>
         <!-- My Style and JS -->
         <link rel="stylesheet" href="3_Graphic_ThreeJS_Lena/theme/style.css">
+        <script src="data/data.js" type="text/javascript"></script>
         <script src="3_Graphic_ThreeJS_Lena/js/functions.js"></script>
-
-
-
+        <link href="js/log/log.css" rel="stylesheet" type="text/css"/>
+        <script src="js/log/log.js" type="text/javascript"></script>
     </head>
     <body>
         <!-- SHADER RGB -->
@@ -113,17 +114,18 @@ and open the template in the editor.
 
         <div>ThreeJS_Lena v13.0 - EgoshkinDanila</div><div id = "FPSCounter"></div>
         <script>
-            imgWidth = 0;
-            imgHeight = 0;
-
-            var img = new Image();
-            img.onload = function () {
-                imgWidth = this.width;
-                imgHeight = this.height;
-                alert(this.width + 'x' + this.height);
-                //DrawLena();
-            };
-            img.src = srcTexture;/*'http://www.google.com/intl/en_ALL/images/logo.gif';*/
+            /*
+             imgWidth = 0;
+             imgHeight = 0;
+             
+             var img = new Image();
+             img.onload = function () {
+             imgWidth = this.width;
+             imgHeight = this.height;
+             alert(this.width + 'x' + this.height);
+             //DrawLena();
+             };
+             img.src = srcTexture;/*'http://www.google.com/intl/en_ALL/images/logo.gif';*/
         </script>
 
         <div class="ui-widget-content ui-state-default ui-corner-all ui-helper-clearfix" style="padding: 10px">
@@ -151,49 +153,58 @@ and open the template in the editor.
                     <input type="checkbox" id="checkGrayscale" name="radio"><label for="checkGrayscale">Полутоновое</label>
                     <input type="checkbox" id="buttonLoad" name="radio"><label for="buttonLoad">Другая Картинка</label>
                     <input type="file" id="logo" style="display: none" accept="image/*"/>
-                    <span id="FileName">Lena Soderberg</span>
+                    <span id="FileName">Lena Soderberg</span><span> -> </span>
+                    <canvas id="Texture" class="x01" width="100" height="100"></canvas>
                 </div>
             </div>
         </div>
-        <div class="" id="LenaSoderberg" ></div>
+        <div id="LenaSoderberg" ></div>
 
         <script>
-            var scene = new THREE.Scene(); // Create a Three.js scene object.
-            var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000); // Define the perspective camera's attributes.
+            var CubeRGB = function () {
+                var scene = null, // without VAR they are global
+                        camera = null,
+                        renderer = null,
+                        cube = null,
+                        geometry = null,
+                        material = null;
 
-            var renderer = window.WebGLRenderingContext ? new THREE.WebGLRenderer() : new THREE.CanvasRenderer(); // Fallback to canvas renderer, if necessary.
-            renderer.domElement.id = "CubeCanvas";
-            renderer.setSize(500, 500); // Set the size of the WebGL viewport.
-            document.getElementById("Cube").appendChild(renderer.domElement); // Append the WebGL viewport to the DOM.
-            document.getElementById("CubeCanvas").style.width = "100%"; //document.getElementById("Cube").children[0].style.width = "100%";
-            document.getElementById("CubeCanvas").style.height = "100%"; //document.getElementById("Cube").children[0].style.height = "100%";
-            var geometry = new THREE.CubeGeometry(20, 20, 20); // Create a 20 by 20 by 20 cube.
-            var material = new THREE.MeshBasicMaterial({color: "#" + ShaderColor1}); // Skin the cube with 100% blue.
-            var cube = new THREE.Mesh(geometry, material); // Create a mesh based on the specified geometry (cube) and material (blue skin).
-            scene.add(cube); // Add the cube at (0, 0, 0).
+                this.init = function () {
+                    scene = new THREE.Scene(); // Create a Three.js scene object.
+                    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000); // Define the perspective camera's attributes.
 
-            camera.position.z = 30; // Move the camera away from the origin, down the positive z-axis.
+                    renderer = window.WebGLRenderingContext ? new THREE.WebGLRenderer() : new THREE.CanvasRenderer(); // Fallback to canvas renderer, if necessary.
+                    renderer.domElement.id = "CubeCanvas";
+                    renderer.setSize(500, 500); // Set the size of the WebGL viewport.
+                    document.getElementById("Cube").appendChild(renderer.domElement); // Append the WebGL viewport to the DOM.
+                    document.getElementById("CubeCanvas").style.width = "100%"; //document.getElementById("Cube").children[0].style.width = "100%";
+                    document.getElementById("CubeCanvas").style.height = "100%"; //document.getElementById("Cube").children[0].style.height = "100%";
+                    geometry = new THREE.BoxGeometry(20, 20, 20); // Create a 20 by 20 by 20 cube.
+                    material = new THREE.MeshBasicMaterial({color: "#" + ShaderColor1}); // Skin the cube with 100% blue.
+                    cube = new THREE.Mesh(geometry, material); // Create a mesh based on the specified geometry (cube) and material (blue skin).
+                    scene.add(cube); // Add the cube at (0, 0, 0).
 
-            var render = function () {
-                cube.rotation.x += 0.01; // Rotate the sphere by a small amount about the x- and y-axes.
-                cube.rotation.y += 0.01;
-                var material1 = new THREE.MeshBasicMaterial({color: "#" + ShaderColor1}); // Skin the cube with 100% blue.
-                cube.material = material1; // Skin the cube with 100% blue.
-                scene.cube = cube;
-                renderer.render(scene, camera); // Each time we change the position of the cube object, we must re-render it.
-                requestAnimationFrame(render); // Call the render() function up to 60 times per second (i.e., up to 60 animation frames per second).
+                    camera.position.z = 30; // Move the camera away from the origin, down the positive z-axis.
+                };
+                this.render = function () {
+                    cube.rotation.x += 0.01; // Rotate the sphere by a small amount about the x- and y-axes.
+                    cube.rotation.y += 0.01;
+                    material = new THREE.MeshBasicMaterial({color: "#" + ShaderColor1}); // Skin the cube with 100% blue.
+                    cube.material = material; // Skin the cube with 100% blue.
+                    scene.cube = cube;
+                    renderer.render(scene, camera); // Each time we change the position of the cube object, we must re-render it.
+                    requestAnimationFrame(this.render.bind(this)); // Call the render() function up to 60 times per second (i.e., up to 60 animation frames per second).
+                };
             };
 
-            render(); // Start the rendering of the animation frames.
-        </script>
+ </script>
         <script>
             function DrawLena() {
-                var scene2;
+                var scene2;             // without VAR they are global
                 var camera2;
                 var renderer2;
                 var controls;
                 var plane;
-
                 var init = function () {
 
                     scene2 = new THREE.Scene(); // Create a Three.js scene object.
@@ -211,14 +222,13 @@ and open the template in the editor.
 
                     renderer2.domElement.clientWidth = imgWidth;
                     renderer2.domElement.clientHeight = imgHeight;
-                    var Width = imgWidth;// * (imgWidth / renderer2.domElement.clientWidth);
-                    var Height = imgHeight;// * (imgHeight / renderer2.domElement.clientHeight);
+                    var Width = imgWidth; // * (imgWidth / renderer2.domElement.clientWidth);
+                    var Height = imgHeight; // * (imgHeight / renderer2.domElement.clientHeight);
                     var geometry2 = new THREE.PlaneGeometry(Width, Height); // Create a 20 by 20 by 20 cube.
 
                     //// RGB - Shader
                     var vertShaderRGB = document.getElementById('vertexShaderRGB').innerHTML;
                     var fragShaderRGB = document.getElementById('fragmentShaderRGB').innerHTML;
-
                     var uniformsRGB = {
                         texture1: {type: "t", value: THREE.ImageUtils.loadTexture(srcTexture)},
                         R: {type: "f", value: RED},
@@ -250,10 +260,9 @@ and open the template in the editor.
 
                     renderer2.context.canvas = function () {
                         controls = new THREE.OrbitControls(camera2);
-                    };   // RECOMMENT ONLY THIS
+                    }; // RECOMMENT ONLY THIS
                     //controls.addEventListener( 'change', render2 );
                 };
-
                 var render2 = function () {
                     plane.material.uniforms.R.value = RED;
                     plane.material.uniforms.G.value = GREEN;
@@ -269,12 +278,11 @@ and open the template in the editor.
                     requestAnimationFrame(render2); // Call the render() function up to 60 times per second (i.e., up to 60 animation frames per second).
                     //controls.update();    
                 };
-
                 init();
                 //cameraAction();
                 render2(); // Start the rendering of the animation frames.
             }
-        </script>
+ </script>
 
         <!--<div>
             <canvas id="myCanvas" width="578" height="400"></canvas>
