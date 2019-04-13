@@ -16,77 +16,126 @@ and open the template in the editor.
         <!-- BootStrap -->
         <link rel="stylesheet" href="js/libs/twitter-bootstrap/css/bootstrap.css">
         <script src="js/libs/twitter-bootstrap/js/bootstrap.js"></script>
-        <!-- Angular -->
-        <!--<script src="js/libs/angular.js/angular.js"></script>
-        <!-- Angular DataGrid -->
-        <!-- <link rel="stylesheet" href="js/libs/ng-grid/ng-grid.css">
-        <script src="js/libs/ng-grid/ng-grid.js"></script>
         <!-- jQuery UI -->
         <link rel="stylesheet" href="js/libs/jqueryui/jquery-ui.css">
         <script src="js/libs/jqueryui/jquery-ui.js"></script> 
         <!--THREE JS 3D -->
         <script src="js/libs/three.js/three.js"></script> 
+        <!--<script src="https://threejs.org/build/three.js"></script>--> 
         <script src="js/CamerActions.js"></script>
         <link rel="stylesheet" href="js/FPSCounter/FPSCounter.css">
-        <!-- HIGH CHARTS-->
-        <script src="js/libs/highcharts/highcharts.js"></script> 
-
+        <!--Other JS -->
+        <script src="js/gifler.min.js" type="text/javascript"></script>
         <!-- My Style and JS -->
         <link rel="stylesheet" href="4_Graphic_ThreeJS_Shaders_GLSL/theme/style.css">
-
-
-
+        <script src="data/data.js" type="text/javascript"></script>
+        <script src="js/FPSCounter/FPSCounter.js"></script>
+        <script src="4_Graphic_ThreeJS_Shaders_GLSL/js/functions.js"></script>
+        <link href="js/log/log.css" rel="stylesheet" type="text/css"/>
+        <script src="js/log/log.js" type="text/javascript"></script>
     </head>
-
     <body>
-        ThreeJS_Lena v13.0 GLSL - Егошкин Данила Игоревич
 
-        <div class="ui-widget-content" style="border:0 0 auto 0;">
+        <div>ThreeJS_Lena v13.0 GLSL - ЕгошкинДанилаИгоревич</div>
+        <div id = "FPSCounter"></div>
 
-            <div class="ui-state-default ui-corner-all ui-helper-clearfix" style="padding:4px;">
-                <span class="ui-icon ui-icon-pencil" style="float:left; margin:-2px 5px 0 0;"></span>
-                <input type="checkbox" id="checkRGB_ON" name="radio"><label for="checkRGB_ON">Включить</label>
+        <div class="ui-widget-content ui-state-default ui-corner-all ui-helper-clearfix" style="padding: 10px">
+            <div class="row">
+                <div class="col-3">
+                    <div>
+                        <span class="ui-icon ui-icon-pencil" style="float:left;"></span>
+                        Simple Colorpicker
+                        <!--                <span class="ui-icon ui-icon-pencil" style="float:left; margin:-2px 5px 0 0;"></span>-->
+                        <input type="checkbox" id="checkRGB_ON" name="radio" checked="checked"><label for="checkRGB_ON">Включить</label>
+                        <div id="radioRGB">
+                            <input type="radio" id="radio1" name="radio"><label for="radio1">R, G, B</label>
+                            <input type="radio" id="radio2" name="radio" checked="checked"><label for="radio2">RGB</label>
+                        </div>
+
+                        <div id="red"></div>
+                        <div id="green"></div>
+                        <div id="blue"></div>
+
+                        <input type="checkbox" id="buttonLoad" name="radio"><label for="buttonLoad">Другая Картинка</label>
+
+                        <span id="FileName">Lena Soderberg</span><span> -> </span>
+                        <canvas id="Texture" class="x64" width="100" height="100"></canvas>
+                    </div>
+                </div>
+
+                <div class="col-auto">
+                    <div id="swatch" class="ui-widget-content ui-corner-all" style="display: inline-block"><span id="Cube"></span></div>
+                </div>
+                <div class="col-7">
+                    <svg width="16" height="16"> <ellipse cx="8" cy="8" rx="8" ry="8" fill="#8ae234"/> </svg>
+                    <input type="checkbox" id="checkBlur" name="radio"><label for="checkBlur">Фильтр Blur</label>
+                    <input type="checkbox" id="checkGaussianBlur" name="radio"><label for="checkGaussianBlur">Фильтр Гаусса</label>
+                    <svg width="16" height="16"> <ellipse cx="8" cy="8" rx="8" ry="8" fill="#8ae234"/> </svg>
+                    <input type="checkbox" id="checkContrastingUp1" name="radio"><label for="checkContrastingUp1">Контрастный Фильтр 1</label>
+                    <input type="checkbox" id="checkContrastingUp2" name="radio"><label for="checkContrastingUp2">Контрастный Фильтр 2</label>
+                    <input type="checkbox" id="checkContrastingUp3" name="radio"><label for="checkContrastingUp3">Контрастный Фильтр 3 (0 -1 5)</label>
+                    <svg width="16" height="16"> <ellipse cx="8" cy="8" rx="8" ry="8" fill="#8ae234"/> </svg>
+                    <input type="checkbox" id="checkRobertsFilter" name="radio"><label for="checkRobertsFilter">Фильтр Робертса</label>
+                    <input type="checkbox" id="checkPrevittaFilter" name="radio"><label for="checkPrevittaFilter">Фильтр Превитта</label>
+                    <input type="checkbox" id="checkSobelaFilter" name="radio"><label for="checkSobelaFilter">Фильтр Собела</label>
+                    <svg width="16" height="16"> <ellipse cx="8" cy="8" rx="8" ry="8" fill="#8ae234"/> </svg>
+                    <input type="checkbox" id="checkMedianFilter" name="radio"><label for="checkMedianFilter">Медианный Фильтр</label>
+                    <svg width="16" height="16"> <ellipse cx="8" cy="8" rx="8" ry="8" fill="#8ae234"/> </svg>
+                    <input type="checkbox" id="checkInvert" name="radio"><label for="checkInvert">Инвертировать</label>
+                    <input type="checkbox" id="checkGrayscale" name="radio"><label for="checkGrayscale">Полутоновое</label>
+                    <input type="checkbox" id="checkGrayscaleMax" name="radio"><label for="checkGrayscaleMax">Полутоновое через максимум</label>
+                    <svg width="16" height="16"> <ellipse cx="8" cy="8" rx="8" ry="8" fill="#8ae234"/> </svg>
+                    <input type="checkbox" id="checkBordersUnderlining" name="radio"><label for="checkBordersUnderlining"> Включить Подчеркивание Границ</label>
+                    <div style="display: inline-block;">
+                        <div id="sliderBordersUnderlining"></div>
+                        <div id="sliderBordersUnderliningAlpha"></div>
+                    </div>
+                </div>
             </div>
-            <div id="radioRGB">
-                <input type="radio" id="radio1" name="radio"><label for="radio1">R, G, B</label>
-                <input type="radio" id="radio2" name="radio" checked="checked"><label for="radio2">RGB</label>
-            </div>
-            <div id="red"></div>
-            <div id="green"></div>
-            <div id="blue"></div>
-
-            <div id="swatch" class="ui-widget-content ui-corner-all"></div>
-
-            <input type="checkbox" id="checkBlur" name="radio"><label for="checkBlur">Фильтр Blur</label>
-            <input type="checkbox" id="checkGaussianBlur" name="radio"><label for="checkGaussianBlur">Фильтр Гаусса</label>
-            <svg width="16" height="16"> <ellipse cx="8" cy="8" rx="8" ry="8" fill="#8ae234"/> </svg>
-            <input type="checkbox" id="checkContrastingUp1" name="radio"><label for="checkContrastingUp1">Контрастный Фильтр 1</label>
-            <input type="checkbox" id="checkContrastingUp2" name="radio"><label for="checkContrastingUp2">Контрастный Фильтр 2</label>
-            <input type="checkbox" id="checkContrastingUp3" name="radio"><label for="checkContrastingUp3">Контрастный Фильтр 3 (0 -1 5)</label>
-            <svg width="16" height="16"> <ellipse cx="8" cy="8" rx="8" ry="8" fill="#8ae234"/> </svg>
-            <input type="checkbox" id="checkRobertsFilter" name="radio"><label for="checkRobertsFilter">Фильтр Робертса</label>
-            <input type="checkbox" id="checkPrevittaFilter" name="radio"><label for="checkPrevittaFilter">Фильтр Превитта</label>
-            <input type="checkbox" id="checkSobelaFilter" name="radio"><label for="checkSobelaFilter">Фильтр Собела</label>
-            <svg width="16" height="16"> <ellipse cx="8" cy="8" rx="8" ry="8" fill="#8ae234"/> </svg>
-            <input type="checkbox" id="checkMedianFilter" name="radio"><label for="checkMedianFilter">Медианный Фильтр</label>
-            <svg width="16" height="16"> <ellipse cx="8" cy="8" rx="8" ry="8" fill="#8ae234"/> </svg>
-            <input type="checkbox" id="checkInvert" name="radio"><label for="checkInvert">Инвертировать</label>
-            <input type="checkbox" id="checkGrayscale" name="radio"><label for="checkGrayscale">Полутоновое</label>
-            <input type="checkbox" id="checkGrayscaleMax" name="radio"><label for="checkGrayscaleMax">Полутоновое через максимум</label>
-            <input type="checkbox" id="buttonLoad" name="radio"><label for="buttonLoad">Другая Картинка</label>
-            <br>
-            <input type="checkbox" id="checkBordersUnderlining" name="radio"><label for="checkBordersUnderlining"> Включить Подчеркивание Границ</label>
-            <div id="sliderBordersUnderlining"></div>
-            <div id="sliderBordersUnderliningAlpha"></div>
-
-
-
         </div>
 
-        <div id = "FPSCounter"></div>
-        <video id="video" autoplay loop style="display:none">
-            <source src="data/LokiRunsDeep.mp4" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'>
-        </video>
+        <div id="LenaSoderberg" ></div>
+        <script>
+            var CubeRGB = function () {
+                var scene = null, // without VAR they are global
+                        camera = null,
+                        renderer = null,
+                        cube = null,
+                        geometry = null,
+                        material = null;
+
+                this.init = function () {
+                    scene = new THREE.Scene(); // Create a Three.js scene object.
+                    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000); // Define the perspective camera's attributes.
+
+                    renderer = window.WebGLRenderingContext ? new THREE.WebGLRenderer() : new THREE.CanvasRenderer(); // Fallback to canvas renderer, if necessary.
+                    renderer.domElement.id = "CubeCanvas";
+                    renderer.setSize(500, 500); // Set the size of the WebGL viewport.
+                    document.getElementById("Cube").appendChild(renderer.domElement); // Append the WebGL viewport to the DOM.
+                    document.getElementById("CubeCanvas").style.width = "100%"; //document.getElementById("Cube").children[0].style.width = "100%";
+                    document.getElementById("CubeCanvas").style.height = "100%"; //document.getElementById("Cube").children[0].style.height = "100%";
+                    geometry = new THREE.BoxGeometry(20, 20, 20); // Create a 20 by 20 by 20 cube.
+                    material = new THREE.MeshBasicMaterial({color: "#" + ShaderColor1}); // Skin the cube with 100% blue.
+                    cube = new THREE.Mesh(geometry, material); // Create a mesh based on the specified geometry (cube) and material (blue skin).
+                    scene.add(cube); // Add the cube at (0, 0, 0).
+
+                    camera.position.z = 30; // Move the camera away from the origin, down the positive z-axis.
+                };
+                this.render = function () {
+                    cube.rotation.x += 0.01; // Rotate the sphere by a small amount about the x- and y-axes.
+                    cube.rotation.y += 0.01;
+                    material = new THREE.MeshBasicMaterial({color: "#" + ShaderColor1}); // Skin the cube with 100% blue.
+                    cube.material = material; // Skin the cube with 100% blue.
+                    scene.cube = cube;
+                    renderer.render(scene, camera); // Each time we change the position of the cube object, we must re-render it.
+                    requestAnimationFrame(this.render.bind(this)); // Call the render() function up to 60 times per second (i.e., up to 60 animation frames per second).
+                };
+            };
+
+        </script>
+        <!--        <video id="video" autoplay loop style="display:none">
+                    <source src="data/LokiRunsDeep.mp4" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'>
+                </video>-->
 
 
         <!-- MAIN SHADERS -->
@@ -100,6 +149,7 @@ and open the template in the editor.
         </script>
         <script id="fragmentShaderRGB" type="x-shader/x-fragment">
             uniform sampler2D texture1;
+            uniform bool RGB_ON;
             uniform float R;
             uniform float G;
             uniform float B;
@@ -579,10 +629,6 @@ and open the template in the editor.
             /////////////////// FILTERS
 
 
-            gl_FragColor.r = gl_FragColor.r+R/255.0;
-            gl_FragColor.g = gl_FragColor.g+G/255.0;
-            gl_FragColor.b = gl_FragColor.b+B/255.0;
-
 
             if(Blur){
             gl_FragColor = blur();
@@ -615,6 +661,18 @@ and open the template in the editor.
             if(MedianFilterOn){            
             gl_FragColor = MedianFilter();
             }
+
+           
+            if(RGB_ON){
+            gl_FragColor.r = gl_FragColor.r+R/255.0;
+            gl_FragColor.g = gl_FragColor.g+G/255.0;
+            gl_FragColor.b = gl_FragColor.b+B/255.0;
+            } else {
+                gl_FragColor.r = gl_FragColor.r;
+                gl_FragColor.g = gl_FragColor.g;
+                gl_FragColor.b = gl_FragColor.b; 
+            }
+            
             /*
             gl_FragColor.r = float((vTexCoord.x));
             gl_FragColor.g = float((vTexCoord.y));
@@ -624,17 +682,11 @@ and open the template in the editor.
             gl_FragColor.b = 1.0;
             }
             */
+            
             }
 
 
         </script>
-
-        <script>
-
-        </script>
-        <script src="data/video.js"></script>
-        <script src="4_Graphic_ThreeJS_Shaders_GLSL/js/functions.js"></script>
-        <script src="js/FPSCounter/FPSCounter.js"></script>
 
     </body>
 </html>

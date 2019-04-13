@@ -4,14 +4,21 @@
  * and open the template in the editor.
  */
 /*
+ * HTML
  * Add it in HTML
  <div id = "FPSCounter"></div>
+ *
+ * JS
+ * Add FPSCount() in animation loop function - (exmp. render())
+ FPSCount();
  */
 
-var FPS_Real = 100;
+var FPS_Real = 1;
 var FPS_TimeStart = this.getCurrentTime();
 var FPS_Frame = 0;
 var FPS_FrameOld = 0;
+
+// Returns FPS in the one second 1000ms
 function getFPS() {
     var newTime = getCurrentTime();
 
@@ -23,7 +30,8 @@ function getFPS() {
     return FPS_FrameOld;
 }
 
-function FPSAdd() {
+// Use in animation loop function - (exmp. render())
+function FPSCount() {
     FPS_Frame++;
 }
 
@@ -31,8 +39,8 @@ function getCurrentTime() {
     return (self.performance !== undefined && self.performance.now !== undefined) ? self.performance.now() : Date.now();
 }
 
-window.onload = function () {
+window.addEventListener("load", function () {
     setInterval(function () {
         document.getElementById("FPSCounter").innerHTML = "FPS: " + getFPS();
     }, 1000 / FPS_Real);
-};
+});

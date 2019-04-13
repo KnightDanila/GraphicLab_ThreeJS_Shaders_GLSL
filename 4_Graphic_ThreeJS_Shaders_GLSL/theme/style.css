@@ -1,6 +1,6 @@
 html{
     /*width: 100%;*/
-    height: 100%;
+    /*height: 100%;*/
     background-repeat: no-repeat;
     background-position: center center;
     background-size: 100% 100%;/*cover;*/
@@ -10,7 +10,7 @@ html{
 }
 
 body {
-    padding-bottom: 100%;
+    padding: 15px;
     background: linear-gradient(45deg, rgba(0,0,0,0), rgba(0,0,0,0));
     /*background-color: rgba(0,0,0,255);*/
     /*background-color: black;*/
@@ -18,6 +18,8 @@ body {
     color: yellowgreen;
 
 }
+
+html, body{height: 100%;}
 
 .table-style{
     display: inline-block;
@@ -27,45 +29,65 @@ body {
 }
 .gridStyle {
     border: 1px solid rgb(212,212,212);
-    
+
     width: 400px; 
     height: 300px;
 }
 
 
-#red, #green, #blue, #sliderBordersUnderlining, #sliderBordersUnderliningAlpha{
-    float: left;
-    clear: left;
-    width: 300px;
-    margin: 15px;
-  }
-  #swatch {
+#red, #green, #blue {
+    /*float: left;*/
+    /*clear: left;*/
+    width: 200px;
+    margin: 8px;
+}
+#sliderBordersUnderlining, #sliderBordersUnderliningAlpha {
+    top: 5px;
+    width: 100px;
+}
+
+#swatch {
     width: 120px;
     height: 120px;
-    margin-top: 18px;
-    margin-left: 350px;
-    margin-bottom: 18px;
+    /*margin-top: 18px;*/
+    /*margin-left: 350px;*/
+    /*margin-bottom: 18px;*/
     background-image: none;
-    
-    /*box-sizing: border-box;  Ширина блока с полями */
+    padding: 5px;
+    /*float: left;*/
+    /*box-sizing: border-box;  /*Ширина блока с полями
     /*position: relative;*/
     /*clear:both;*/
-  }
-  #red .ui-slider-range { background: #ef2929; }
-  #red .ui-slider-handle { border-color: #ef2929; }
-  #green .ui-slider-range { background: #8ae234; }
-  #green .ui-slider-handle { border-color: #8ae234; }
-  #blue .ui-slider-range { background: #729fcf; }
-  #blue .ui-slider-handle { border-color: #729fcf; }
+}
+#red .ui-slider-range { background: #ef2929; }
+#red .ui-slider-handle { border-color: #ef2929; }
+#green .ui-slider-range { background: #8ae234; }
+#green .ui-slider-handle { border-color: #8ae234; }
+#blue .ui-slider-range { background: #729fcf; }
+#blue .ui-slider-handle { border-color: #729fcf; }
 
-  #canvas {
-    background-color: #000;
-    width: 500px;
-    height: 500px;
-    border: 1px solid black;
-    margin: 100px;
-    padding: 0px;
-    position: static; /* fixed or static */
-    top: 100px;
-    left: 100px;
+
+
+#LenaSoderberg {
+    text-align: center;
+    /*width: 80%;*/
+    height: 75%;
+}
+
+
+
+.x01 {
+    width: 10%;
+    height: auto;
+    position: absolute;
+}
+.x32 {
+    width: 32px;
+    height: 32px;
+    position: absolute;
+}
+.x64 {
+    width: 64px;
+    height: 64px;
+    position: absolute;
 }

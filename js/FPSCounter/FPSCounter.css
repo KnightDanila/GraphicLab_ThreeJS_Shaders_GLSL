@@ -12,4 +12,7 @@ and open the template in the editor.
     /*background-color: #000;*/
     font-size: medium;
     font-weight: bold;
+    position: absolute;
+    margin-left: 93%;
+    top: 10px;
 }
