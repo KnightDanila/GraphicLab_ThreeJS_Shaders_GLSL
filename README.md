@@ -10,3 +10,22 @@ It is Shader Graphic Experiments on ThreeJS library :)
 1. Download repo by "Clone or download" -> "Download ZIP" or use it online
 2. Click "Starter.bat" or index.html
 3. Choose an experiment :)
+
+### data.js
+If you want change something or add, go to the data folder and open data.js JSON file:
+```
+data = [
+    // Pictures
+    "data/reWalls.com_70838.jpg",
+    ...
+    // GIF
+    "data/GravityFalls_main (2).gif",
+    ...
+    // Video
+    "data/LokiRunsDeep.mp4",
+    ...
+    // TEXT
+    "data/ginnytext.png",
+    ...
+];
+```
