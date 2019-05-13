@@ -132,7 +132,10 @@ and open the template in the editor.
                 <div class="col">
                     <input type="checkbox" id="checkInvert" name="radio"><label for="checkInvert">Инвертировать</label>
                     <input type="checkbox" id="checkGrayscale" name="radio"><label for="checkGrayscale">Полутоновое</label>
-                    <input type="checkbox" id="buttonLoad" name="radio"><label for="buttonLoad">Другая Картинка</label>
+                    <!--Другая Картинка-->
+                    <br>
+                    <select name="selectImage" id="selectImage"></select>
+                    <input type="checkbox" id="buttonLoad" name="radio"><label for="buttonLoad"> >>> </label>
                     <input type="file" id="logo" style="display: none" accept="image/*"/>
                     <span id="FileName">Lena Soderberg</span><span> -> </span>
                     <canvas id="Texture" class="x01" width="100" height="100"></canvas>
@@ -140,6 +143,7 @@ and open the template in the editor.
             </div>
         </div>
         <div id="LenaSoderberg" ></div>
+        <video id="video" width=500 height=80 controls></video>
 
         <script>
             var CubeRGB = function () {
