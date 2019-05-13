@@ -20,19 +20,35 @@ $(function () {
     {
         this.checked = true;
         changeImg();
-        $("#FileName")[0].innerHTML = srcTexture.match(/[^\\\/]+$/gm);
+        $('#selectImage').val(currentImg);
+        $("#selectImage").selectmenu("refresh");
     });
 });
 function changeImg() {
     if (currentImg + 1 < srcImgArray.length) {
         currentImg++;
-        srcTexture = srcImgArray[currentImg];
     } else {
         currentImg = 0;
-        srcTexture = srcImgArray[currentImg];
     }
     reloadImg();
 }
+$(function () {
+    var options = [];
+    for (i = 0; i < srcImgArray.length; i++) {
+        options.push("<option value='" + i + "'>" + srcImgArray[i].match(/[^\\\/]+$/gm) + "</option>");
+    }
+    //append after populating all options
+    $('#selectImage')
+            .append(options.join(""))
+            .selectmenu({width: 130, maxHeight: 200, style: 'dropdown'})
+            .selectmenu("menuWidget").css("height", "200px");
+    $('#selectImage-button').css("margin-top", "-8px");
+    $('#selectImage').on('selectmenuchange', function (event, ui) {
+        //alert(ui.item.value);
+        currentImg = parseInt(ui.item.value, 10);
+        reloadImg();
+    });
+});
 /////////////////////////////////////////  Load and ReLoad Img
 imgWidth = 0;
 imgHeight = 0;
@@ -46,11 +62,17 @@ var video = null;
 function reloadImg() {
     // Reload Phase
     {
+        srcTexture = srcImgArray[currentImg];
+        $("#FileName")[0].innerHTML = srcTexture.match(/[^\\\/]+$/gm);
+
         RELOADED = false;
         if (video) {
             video.pause();
+            video.style.visibility = "hidden";
+            //video.src = false; - makes bugs
             video = false;
             log.add("video stopped");
+
         }
         /*
          // IT DID NOT WORK
@@ -112,6 +134,14 @@ function reloadImg() {
                         //animator.start();
                     }
                 });
+                $('#selectImage').on('selectmenuchange', function () {
+                    if (animator.running()) {
+                        animator.stop();
+                        log.add("animator stopped");
+                    } else {
+                        //animator.start();
+                    }
+                });
             });
 
             log.add(srcTexture);
@@ -122,12 +152,20 @@ function reloadImg() {
     }
 
     // Video MP4 - x264
-    if (fileExtension === ".mp4" || fileExtension === ".mkv" || fileExtension === ".ts" || fileExtension === ".avi") {
+    if (fileExtension === ".mp4" || fileExtension === ".mkv" || fileExtension === ".webm" || fileExtension === ".avi" || fileExtension === ".ogg") {
         // create the video element
         // http://www.kaizou.org/2012/09/frame-by-frame-video-effects-using-html5-and/
-        video = document.createElement('video');
-        video.id = 'video';
-        //video.type = ' video/ogg; codecs="theora, vorbis" ';
+        video = document.getElementById('video');
+        //video.id = 'video';
+        if (fileExtension === ".mp4") {
+            video.type = ' video/mp4; ';
+        }
+        if (fileExtension === ".ogg") {
+            video.type = ' video/ogg; codecs="theora, vorbis" ';
+        }
+        if (fileExtension === ".webm") {
+            video.type = ' video/webm ';
+        }
 
         video.onloadedmetadata = function () {
             imgWidth = this.videoWidth;
@@ -155,6 +193,7 @@ function reloadImg() {
             log.add("video-mp4-type");
             RELOADED = true;
         };
+        video.style.visibility = "visible";
         video.src = srcTexture;
         video.load(); // must call after setting/changing source
         video.loop = true;
@@ -526,7 +565,7 @@ var MainCanvasRender = function () {
         requestAnimationFrame(this.render.bind(this)); // Call the render() function up to 60 times per second (i.e., up to 60 animation frames per second).
 
         /*
-        renderer2.context.canvas.onblur = function () {
+         renderer2.context.canvas.onblur = function () {
          alert("1");
          controls.update();
          };
